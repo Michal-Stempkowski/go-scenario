@@ -1,5 +1,7 @@
 package scenario
 
+import "fmt"
+
 type StrictScene struct {
 	expectedCalls []*Call
 	receivedCalls []*Call
@@ -12,7 +14,12 @@ func (s *StrictScene) Call(args ...interface{}) (c *Call) {
 	return
 }
 
-func (s *StrictScene) Forward(args ...interface{}) interface{} {
+func (s *StrictScene) Forward(args ...interface{}) (result interface{}) {
+	receivedCall := &Call{args: args}
+	s.receivedCalls = append(s.receivedCalls, receivedCall)
+	if len(s.receivedCalls) > len(s.expectedCalls) {
+		s.fail("Unexpected: %v", receivedCall)
+	}
 	//receivedCall := &Call{args: args}
 	//s.receivedCalls = append(s.receivedCalls, receivedCall)
 	//callIndex := len(s.receivedCalls)
@@ -82,6 +89,10 @@ func (s *StrictScene) Summarize() []string {
 		//i := len()
 	}
 	return s.failures
+}
+
+func (s *StrictScene) fail(format string, args ...interface{}) {
+	s.failures = append(s.failures, fmt.Sprintf(format, args...))
 }
 
 func NewStrictScene() *StrictScene {

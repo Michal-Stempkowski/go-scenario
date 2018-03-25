@@ -25,11 +25,38 @@ func TestStrictScene_Call(t *testing.T) {
 }
 
 func TestStrictSceneNoFailures(t *testing.T) {
+	//Given:
 	tc := "TestStrictSceneNoFailures"
 	uut := NewStrictScene()
+
+	//When:
 	f := uut.Summarize()
+
+	//Then:
 	if len(f) != 0 {
 		t.Errorf("%v: no failures expected but received: %v", tc, f)
+	}
+}
+
+func TestStrictScene_ForwardUnexpectedCall(t *testing.T) {
+	//Given:
+	tc := "TestStrictScene_ForwardUnexpectedCall"
+	uut := NewStrictScene()
+
+	//When:
+	r := uut.Forward("Some", "args")
+
+	//Then:
+	f := uut.Summarize()
+	if len(f) != 1 {
+		t.Errorf("%v: singe failure expected, but received: %v", tc, f)
+		t.FailNow()
+	}
+	if f[0] != "Unexpected: Call[(`Some`, `args`)]" {
+		t.Errorf("%v: invalid error: %v", tc, f[0])
+	}
+	if r != nil {
+		t.Errorf("%v: nil expected but returned: %v", tc, r)
 	}
 }
 

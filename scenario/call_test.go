@@ -54,7 +54,7 @@ func TestCall_String(t *testing.T) {
 	s := fmt.Sprint(uut)
 
 	//Then:
-	if s != "Call[(some arg)->(5, <nil>)]" {
+	if s != "Call[(`some arg`)->(`5`, `<nil>`)]" {
 		t.Errorf("%v: unexpected string generated: %v", tc, s)
 	}
 }
@@ -120,7 +120,7 @@ func TestCall_Describe(t *testing.T) {
 	s := fmt.Sprint(uut)
 
 	//Then:
-	if s != "Call[(some arg)->(5, <nil>) //Description]" {
+	if s != "Call[(`some arg`)->(`5`, `<nil>`) //Description]" {
 		t.Errorf("%v: unexpected string generated: %v", tc, s)
 	}
 }

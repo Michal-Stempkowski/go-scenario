@@ -28,7 +28,7 @@ func (c *Call) Describe(description string) *Call {
 func (_ *Call) formatSlice(s []interface{}) string {
 	argsAsString := make([]string, 0, len(s))
 	for _, a := range s {
-		argsAsString = append(argsAsString, fmt.Sprint(a))
+		argsAsString = append(argsAsString, fmt.Sprintf("`%v`", a))
 	}
 
 	return strings.Join(argsAsString, ", ")
