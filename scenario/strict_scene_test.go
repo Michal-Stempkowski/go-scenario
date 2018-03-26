@@ -60,6 +60,31 @@ func TestStrictScene_ForwardUnexpectedCall(t *testing.T) {
 	}
 }
 
+func TestStrictScene_ForwardCallDiffers(t *testing.T) {
+	//Given:
+	tc := "TestStrictScene_ForwardCallShorter"
+	uut := NewStrictScene()
+	uut.Call(42, "some arg").Returns(5)
+
+	//When:
+	r := uut.Forward(8)
+
+	//Then:
+	f := uut.Summarize()
+	if len(f) != 1 {
+		t.Errorf("%v: singe failure expected, but received: %v", tc, f)
+		t.FailNow()
+	}
+	if f[0] != "Calls differ; " +
+		"Expected[2-ary]: Call[(`42`, `some arg`)->(`5`)]; " +
+		"Received[1-ary]: Call[(`8`)]" {
+		t.Errorf("%v: invalid error: %v", tc, f[0])
+	}
+	if r != nil {
+		t.Errorf("%v: nil expected but returned: %v", tc, r)
+	}
+}
+
 //func TestStrictSceneCallOmitted(t *testing.T) {
 //	tc := "TestStrictSceneCallOmitted"
 //	uut := NewStrictScene()

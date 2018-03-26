@@ -19,68 +19,22 @@ func (s *StrictScene) Forward(args ...interface{}) (result interface{}) {
 	s.receivedCalls = append(s.receivedCalls, receivedCall)
 	if len(s.receivedCalls) > len(s.expectedCalls) {
 		s.fail("Unexpected: %v", receivedCall)
+		return
 	}
-	//receivedCall := &Call{args: args}
-	//s.receivedCalls = append(s.receivedCalls, receivedCall)
-	//callIndex := len(s.receivedCalls)
-	//if callIndex > len(s.expectedCalls) {
-	//	s.failures = append(
-	//		s.failures,
-	//		fmt.Sprintf(
-	//			"Unexpected receivedCall %v", receivedCall.String(),
-	//		),
-	//	)
-	//	return
-	//}
-	//
-	//expectedCall := s.expectedCalls[callIndex]
-	//callLen := len(receivedCall.args)
-	//expectedLen := len(expectedCall.args)
-	//biggerLen := int(math.Max(float64(callLen), float64(expectedLen)))
-	//if callLen != expectedLen {
-	//	s.failures = append(
-	//		s.failures,
-	//		fmt.Sprintf(
-	//			"Arg length does not match (received: %v, expectedCall: %v)",
-	//			callLen,
-	//			expectedLen,
-	//		),
-	//	)
-	//}
-	//
-	//for i := 0; i < biggerLen; i++ {
-	//	missingReceivedArg, missingExpectedArg := false, false
-	//	var receivedArg, expectedArg interface{}
-	//	if i < callLen {
-	//		receivedArg =receivedCall.args[i]
-	//	} else {
-	//		missingReceivedArg = true
-	//	}
-	//
-	//	if i < expectedLen {
-	//		expectedArg = expectedCall.args[i]
-	//	} else {
-	//		missingExpectedArg = true
-	//	}
-	//
-	//	areEqual := receivedCall == expectedCall
-	//
-	//	if missingExpectedArg {
-	//		expectedArg = "<Missing Arg>"
-	//	}
-	//
-	//	if missingReceivedArg {
-	//		receivedArg = "<Missing Arg>"
-	//	}
-	//
-	//	if missingExpectedArg && missingReceivedArg {
-	//		panic("StrictScene::Forward [missingExpectedArg && missingReceivedArg]")
-	//	}
-	//
-	//	if missingExpectedArg || missingReceivedArg || !areEqual {
-	//		s.failures =
-	//	}
-	//}
+
+	expectedCall := s.expectedCalls[len(s.receivedCalls)-1]
+	if !receivedCall.InputEqual(expectedCall) {
+		leftArity, _ := expectedCall.Arity()
+		rightArity, _ := receivedCall.Arity()
+		s.fail(
+			"Calls differ; Expected[%v-ary]: %v; Received[%v-ary]: %v",
+			leftArity,
+			expectedCall,
+			rightArity,
+			receivedCall,
+		)
+		return
+	}
 	return nil
 }
 

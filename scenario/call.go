@@ -54,9 +54,32 @@ func (c *Call) String() string {
 	)
 }
 
+func (c *Call) Arity() (int, int) {
+	return len(c.args), len(c.returnValues)
+}
+
 func (c *Call) Equal(o *Call) bool {
-	if len(c.args) != len(o.args) ||
-		len(c.returnValues) != len(o.returnValues) {
+	return c.InputEqual(o) && c.OutputEqual(o)
+}
+
+func (c *Call) InputArityEqual(o *Call) bool {
+	l, _ := c.Arity()
+	r, _ := o.Arity()
+	return l == r
+}
+
+func (c *Call) OutputArityEqual(o *Call) bool {
+	_, l := c.Arity()
+	_, r := o.Arity()
+	return l == r
+}
+
+func (c *Call) ArityEqual(o *Call) bool {
+	return c.InputArityEqual(o) && c.OutputArityEqual(o)
+}
+
+func (c *Call) InputEqual(o *Call) bool {
+	if !c.InputArityEqual(o) {
 		return false
 	}
 
@@ -64,6 +87,14 @@ func (c *Call) Equal(o *Call) bool {
 		if c.args[i] != o.args[i] {
 			return false
 		}
+	}
+
+	return true
+}
+
+func (c *Call) OutputEqual(o *Call) bool {
+	if !c.OutputArityEqual(o) {
+		return false
 	}
 
 	for i := range c.returnValues {
